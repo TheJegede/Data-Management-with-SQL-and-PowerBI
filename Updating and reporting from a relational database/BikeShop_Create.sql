@@ -1,0 +1,144 @@
+drop database if exists bikeshop;
+create database if not exists bikeshop;
+
+use bikeshop;
+
+CREATE TABLE LETTERSTYLE (
+	LETTERSTYLEID VARCHAR(50), 
+	DESCRIPTION VARCHAR(50),
+    
+    constraint primary key (letterstyleid)
+);
+
+CREATE TABLE MANUFACTURER (
+	MANUFACTURERID INT,
+	MANUFACTURERNAME VARCHAR(50),
+	CONTACTNAME VARCHAR(50),
+	PHONE VARCHAR(50),
+	ADDRESS VARCHAR(50), 
+	ZIPCODE VARCHAR(50),
+	CITYID INT DEFAULT 0,  
+	BALANCEDUE DECIMAL(38,4) DEFAULT 0,
+    
+    constraint primary key (manufacturerid)
+);
+
+  CREATE TABLE COMPONENT (
+	COMPONENTID INT DEFAULT 0,
+	MANUFACTURERID INT DEFAULT 0, 
+	PRODUCTNUMBER VARCHAR(50),
+	ROAD VARCHAR(50),
+	CATEGORY VARCHAR(50),
+	LENGTH INT DEFAULT 0, 
+	HEIGHT INT DEFAULT 0,
+	WIDTH INT DEFAULT 0, 
+	WEIGHT INT DEFAULT 0,
+	YEAR INT, 
+	ENDYEAR INT,
+	DESCRIPTION VARCHAR(100),
+	LISTPRICE DECIMAL(38,4) DEFAULT 0,
+	ESTIMATEDCOST DECIMAL(38,4) DEFAULT 0, 
+	QUANTITYONHAND INT DEFAULT 10,
+    
+    constraint primary key (componentid),
+    constraint foreign key (manufacturerid) references manufacturer(manufacturerid)
+);
+
+CREATE TABLE MODELTYPE (
+    MODELTYPEID VARCHAR(50),
+    DESCRIPTION VARCHAR(50),
+    COMPONENTID INT,
+    
+    constraint primary key (modeltypeid),
+    constraint foreign key (componentid) references component(componentid)
+);
+
+CREATE TABLE PAINT (
+    PAINTID INT,
+    COLORNAME VARCHAR(50),
+    COLORSTYLE VARCHAR(50) DEFAULT 'Solid',
+    COLORLIST VARCHAR(50),
+    DATEINTRODUCED DATE,
+    DATEDISCONTINUED DATE,
+    
+    CONSTRAINT PRIMARY KEY (paintid)
+);
+
+CREATE TABLE BICYCLE (
+	SERIALNUMBER INT NOT NULL,
+	CUSTOMERID INT DEFAULT 0,
+	MODELTYPE VARCHAR(50),
+	PAINTID INT DEFAULT 0, 
+	FRAMESIZE INT DEFAULT 0,
+	ORDERDATE DATE,
+	STARTDATE DATE,
+	SHIPDATE DATE,
+	SHIPEMPLOYEE INT DEFAULT 0,
+	FRAMEASSEMBLER INT DEFAULT 0, 
+	PAINTER INT DEFAULT 0,
+	CONSTRUCTION VARCHAR(50) DEFAULT 'Bonded',
+	WATERBOTTLEBRAZEONS INT DEFAULT 4,
+	CUSTOMNAME VARCHAR(50),
+	LETTERSTYLEID VARCHAR(50), 
+	STOREID INT DEFAULT 0,
+	EMPLOYEEID INT DEFAULT 0,
+	TOPTUBE INT DEFAULT 0, 
+	CHAINSTAY INT DEFAULT 0,
+	HEADTUBEANGLE INT DEFAULT 0,
+	SEATTUBEANGLE INT DEFAULT 0,
+	LISTPRICE DECIMAL(38,4) DEFAULT 0,
+	SALEPRICE DECIMAL(38,4) DEFAULT 0,
+	SALESTAX DECIMAL(38,4) DEFAULT 0, 
+	SALESTATE VARCHAR(50),
+	SHIPPRICE DECIMAL(38,4) DEFAULT 0, 
+	FRAMEPRICE DECIMAL(38,4) DEFAULT 0,
+	COMPONENTLIST DECIMAL(38,4) DEFAULT 0,
+    
+    constraint primary key (serialnumber),
+    constraint foreign key (modeltype) references modeltype(modeltypeid),
+    constraint foreign key (paintid) references paint(paintid),
+    constraint foreign key (letterstyleid) references letterstyle(letterstyleid)
+    
+);
+
+
+
+CREATE TABLE BIKEPARTS (
+	SERIALNUMBER INT DEFAULT 0,
+	COMPONENTID INT DEFAULT 0,
+    SUBSTITUTEID INT DEFAULT 0,
+	LOCATION VARCHAR(50),
+	QUANTITY INT DEFAULT 0,
+	DATEINSTALLED DATE,
+	EMPLOYEEID INT DEFAULT 0,
+    
+    constraint primary key (serialnumber, componentid),
+    constraint foreign key (serialnumber) references bicycle(serialnumber),
+    constraint foreign key (componentid) references component(componentid)
+);
+
+CREATE TABLE TUBEMATERIAL (
+	TUBEID INT DEFAULT 0,
+	MATERIAL VARCHAR(50),
+	DESCRIPTION VARCHAR(100),
+	DIAMETER INT DEFAULT 0,
+	THICKNESS INT DEFAULT 0,
+	ROUNDNESS VARCHAR(50),
+	WEIGHT INT DEFAULT 0,
+	STIFFNESS INT DEFAULT 0,
+	LISTPRICE DECIMAL(38,4) DEFAULT 1,
+	CONSTRUCTION VARCHAR(50) DEFAULT 'Bonded',
+    
+    constraint pk_tubematerial primary key (TUBEID)
+);
+
+CREATE TABLE BIKETUBES (
+	SERIALNUMBER INT DEFAULT 0,
+	TUBENAME VARCHAR(50),
+	TUBEID INT DEFAULT 0,
+	LENGTH INT DEFAULT 0,
+    
+    constraint PRIMARY KEY (serialnumber, tubename, tubeid),
+    constraint foreign key (serialnumber) references bicycle(serialnumber),
+    constraint foreign key (tubeid) references tubematerial(tubeid)
+);
